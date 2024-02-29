@@ -50,7 +50,6 @@ dataBase = mysql.connector.connect(
 
 cursor = dataBase.cursor()
 
-
 @app.route('/login', methods=['POST'])
 @cross_origin(origins=[u"*"])
 def login():
@@ -67,7 +66,22 @@ def login():
         return jsonify({'msg': 'Login'})
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
+    
 
+
+@app.route('/allData', methods=['GET'])
+@cross_origin(origins=[u"*"])
+def allData():
+    # Get username and password from request
+
+    query = f"SELECT * FROM STUDENT"
+    cursor.execute(query)
+    myresult = cursor.fetchall() 
+
+    if myresult:
+        return jsonify({'students':myresult})
+    else:
+        return jsonify({'error': 'Invalid credentials'}), 401
 
 @app.route('/protected_data', methods=['GET'])
 def protected_data():
@@ -95,7 +109,6 @@ class Student:
         return myresult
 
     def update_contact_info(self, contact_info):
-        # Implement update contact information logic here
         pass
 
 

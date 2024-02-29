@@ -4,7 +4,6 @@ import login from './components/login.vue';
 import signup from './components/signup.vue';
 // import VueRouter from 'vue-router';
 
-// Define your routes
 const routes = [
     {
         path: '/',

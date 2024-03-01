@@ -11,8 +11,8 @@
                 <input type="email" id="email" v-model="email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" v-model="password" required>
+                <label for="studentId">Student ID</label>
+                <input type="text" id="studentId" v-model="studentId" required>
             </div>
             <div class="form-group">
             <label for="coursename">Course Name</label>
@@ -60,7 +60,7 @@ export default {
         };
     },
     methods: {
-        async login() {
+        async signup() {
             try {
                 const response = await fetch('http://localhost:5000/signup', {
                     method: 'POST',
@@ -88,8 +88,8 @@ export default {
                     alert(data.error); // Display error message if login fails
                 }
             } catch (error) {
-                console.error('Login failed:', error);
-                alert('An error occurred while logging in.');
+                console.error('Signup failed:', error);
+                alert('An error occurred while signing in.');
             }
         }
     }

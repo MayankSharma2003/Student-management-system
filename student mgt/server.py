@@ -67,7 +67,35 @@ def login():
     else:
         return jsonify({'error': 'Invalid credentials'}), 401
     
+@app.route('/signup', methods=['POST'])
+@cross_origin(origins=[u"*"])
+def signup():
+    # Get username and password from request
+    data = request.get_json()
+    username = data.get('username')
+    studentId = data.get('studentId')
+    email = data.get('email')
+    contactnumber = data.get('contactNumber')
+    address = data.get('address')
+    dob = data.get('dob')
+    coursename = data.get('coursename')
+    grades = data.get('grades')
 
+    query = f"SELECT * FROM STUDENT where stud = {studentId}"
+    cursor.execute(query)
+    myresult = cursor.fetchall() 
+    # print(len(myresult))
+    # Validate credentials (dummy example)
+    if len(myresult)==0:
+        sql = "INSERT INTO STUDENT (Stud, Name, Course, Result,DOB, address, contactnumber,email)\
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+
+        sqlMaindata=tuple((studentId,username,coursename,grades,dob,address,contactnumber,email))
+        cursor.execute(sql, sqlMaindata)
+        dataBase.commit()
+        return jsonify({'msg': 'Signup'})
+    else:
+        return jsonify({'error': 'User already exist'}), 401
 
 @app.route('/allData', methods=['GET'])
 @cross_origin(origins=[u"*"])

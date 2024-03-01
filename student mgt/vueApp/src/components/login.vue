@@ -17,7 +17,6 @@
 </template>
 
 <script>
-// import router from './routes'
 
 export default {
     data() {
@@ -42,11 +41,15 @@ export default {
                 const data = await response.json();
                 if (response.ok) {
                     // alert(data.msg); // Assuming the server returns a message upon successful login
-                    this.$router.push('/home')
-                    // window.location.href='/home'
-                    // Redirect the user to another page or perform other actions
+                    localStorage.setItem("token",data.token); 
+                    console.log(data);
+
+                    if(data.role=="student" && localStorage.getItem("token"))
+                        this.$router.push('/home')
+                    else    
+                        this.$router.push('/admin')
                 } else {
-                    alert(data.error); // Display error message if login fails
+                    alert(data.error); 
                 }
             } catch (error) {
                 console.error('Login failed:', error);
@@ -62,8 +65,9 @@ export default {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 5px solid #4c4343;
     border-radius: 5px;
+    background-color: rgb(229, 224, 219);
 }
 
 .form-group {
@@ -80,6 +84,8 @@ input {
     padding: 10px;
     font-size: 16px;
 }
+
+
 
 button {
     width: 100%;

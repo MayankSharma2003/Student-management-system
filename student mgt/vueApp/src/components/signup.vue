@@ -80,10 +80,9 @@ export default {
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    alert(data.msg);  // Assuming the server returns a message upon successful login
+                    alert(data.msg);  
                     this.$router.push('/')
                     // window.location.href='/home'
-                    // Redirect the user to another page or perform other actions
                 } else {
                     alert(data.error); // Display error message if login fails
                 }
@@ -101,7 +100,7 @@ export default {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 5px solid #4c4343;
     border-radius: 5px;
 }
 

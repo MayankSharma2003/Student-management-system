@@ -1,10 +1,8 @@
 <template>
     <div>
-        <h2>Student Records</h2>
-        <h3  style="cursor: pointer; display: flex; width:110%;"><span @click="allData" style="flex:1; float: inline-start;">1. Scrapped records</span><span @click="myData" style="flex:1; float: inline-end ;">2. Show my record</span><button class="delete" style="display: flex; align-items: end;" @click="logout">Logout</button></h3>
-        
-        
-        <table style="display: none;" id="allData">
+        <h2>Welcome Admin⚜</h2>
+        <h3 @click="allData" style="cursor: pointer;"><button class="delete" style="display: flex; align-items: end;" @click="logout">Logout</button></h3>
+        <table>
             <thead>
                 <tr>
                     <th>Name</th>
@@ -13,58 +11,36 @@
                     <th>Contact Number</th>
                     <th>Course Name</th>
                     <th>Grades</th>
+                    <th>Action</th>
                 </tr>
             </thead>
-            <tbody >
-                <tr v-for="student in students" :key="student.studentId">
-                    <td>{{ student.name}}</td>
-                    <td>{{ student.studentId }}</td>
-                    <td>{{ student.email }}</td>
-                    <td>{{ student.contactNumber }}</td>
-                    <td>{{ student.courseName }}</td>
-                    <td>{{ student.grades }}</td>
+            <tbody>
+                <tr v-for="(student, index) in students" :key="index">
+                    <td>
+                        <input type="text" v-model="student.name" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <input type="text" v-model="student.studentId" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <input type="text" v-model="student.email" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <input type="text" v-model="student.contactNumber" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <input type="text" v-model="student.courseName" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <input type="text" v-model="student.grades" :disabled="!student.editing">
+                    </td>
+                    <td>
+                        <button @click="toggleEdit(index),student.editing?NULL:updateData(index)" class="edit">{{ student.editing ? 'Save' : 'Edit' }}</button>
+                        <button @click="deleteData(index), deleteRow(index)" class="delete">Delete</button>
+                    </td>
                 </tr>
-            </tbody> 
+            </tbody>
         </table>
-        <table style="display: none;" id="myData">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Student ID</th>
-                        <th>Email</th>
-                        <th>Contact Number</th>
-                        <th>Course Name</th>
-                        <th>Grades</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="(student, index) in students" :key="index">
-                        <td>
-                            <input type="text" v-model="student.name" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <input type="text" v-model="student.studentId" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <input type="text" v-model="student.email" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <input type="text" v-model="student.contactNumber" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <input type="text" v-model="student.courseName" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <input type="text" v-model="student.grades" :disabled="!student.editing">
-                        </td>
-                        <td>
-                            <button class="edit" @click="toggleEdit(index), student.editing ? NULL : updateData(index)">{{ student.editing ? 'Save' : 'Edit' }}</button>
-                            <button class="delete" @click="deleteData(index), deleteRow(index)">Delete</button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
     </div>
 </template>
 
@@ -75,75 +51,30 @@ export default {
             students: []
         };
     },
-    mounted() {
-        if (!localStorage.getItem('token')) {
+    mounted(){
+        if(!localStorage.getItem('token')){
             this.$router.push('/');
         }
+        this.allData();
     },
     methods: {
-        async logout(){
+        logout(){
             localStorage.removeItem('token');
-            this.$router.push('/')
+            this.$router.push("/")
         },
         toggleEdit(index) {
             this.students[index].editing = !this.students[index].editing;
         },
         deleteRow(index) {
-            alert("Are you sure want to delete your records?");
             this.students.splice(index, 1);
-            this.$router.push('/')
             // console.log(this.students[index]);
         },
         async allData() {
-            document.getElementById("myData").style.display = "none";
-            document.getElementById("allData").style.display = "block";
-            this.students=[]
             try {
                 const response = await fetch('http://localhost:5000/allData', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
-                });
-                let data = await response.json();
-                if (response.ok) {
-                    // alert(data.msg); // Assuming the server returns a message upon successful login
-                    // this.$router.push('/home')
-                    console.log(data['students'].length);
-                    for(let i=0;i< data['students'].length;i++){
-                        let row = data['students'][i];
-                        let obj = {
-                            name: row[1],
-                            studentId: row[0],
-                            email: row[7],
-                            contactNumber: row[6],
-                            courseName: row[2],
-                            grades: row[3]
-                        }
-                        this.students.push(obj)
-                    }
-                    // this.students = data;
-                    // window.location.href='/home'
-                    // Redirect the user to another page or perform other actions
-                } else {
-                    alert(data.error); // Display error message if login fails
-                }
-            } catch (error) {
-                console.error('Data loading failed:', error);
-                alert('An error occurred while fetching data.');
-            }
-        },
-        async myData() {
-            document.getElementById("myData").style.display = "block";
-            document.getElementById("allData").style.display = "none";
-            // document.querySelector(tbody).innerHTML = NULL;
-            this.students=[]
-            try {
-                const response = await fetch('http://localhost:5000/myData', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        "Authorization": localStorage.getItem("token")
                     }
                     // body: JSON.stringify({
                     //     username: this.username,
@@ -164,6 +95,7 @@ export default {
                             contactNumber: row[6],
                             courseName: row[2],
                             grades: row[3]
+
                         }
                         this.students.push(obj)
                     }
@@ -178,8 +110,8 @@ export default {
                 alert('An error occurred while fetching data.');
             }
         },
-        async updateData(index) {
-            try {
+        async updateData(index){
+            try{
                 console.log(this.students[index]);
                 const response = await fetch('http://localhost:5000/updateData', {
                     method: 'POST',
@@ -204,7 +136,7 @@ export default {
                     alert(data.error); // Display error message if login fails
                 }
             }
-            catch (error) {
+            catch(error){
                 console.log(error);
             }
         },
@@ -224,7 +156,7 @@ export default {
                 let data = await response.json();
                 if (response.ok) {
                     alert("Deleted succesfully")
-
+                    
                 } else {
                     alert(data.error); // Display error message if login fails
                 }
@@ -257,15 +189,47 @@ th {
 tr:nth-child(even) {
   background-color: #f2f2f2;
 }
-.edit{
+
+/* Button styles */
+.button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.edit
+    {
     cursor: pointer;
-    background-color: #0091ff;
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
 }
-.delete{
+
+.delete {
     cursor: pointer;
     background-color: #ff0000;
     color: white;
@@ -273,4 +237,5 @@ tr:nth-child(even) {
     padding: 5px 10px;
     border-radius: 5px;
 }
+
 </style>

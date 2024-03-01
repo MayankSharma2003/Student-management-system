@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from './components/Home.vue';
 import login from './components/login.vue';
 import signup from './components/signup.vue';
-// import VueRouter from 'vue-router';
+import admin   from './components/admin.vue';
 
 const routes = [
     {
@@ -20,18 +20,16 @@ const routes = [
         name: 'Home',
         component: Home
     },
-    // Other routes...
+    {
+        path:'/admin', 
+        name:'Admin',
+        component:admin
+    }
 ];
 
-// Create the router instance
 const router = createRouter({
     history: createWebHistory(),
     routes
 });
-// const router = new VueRouter({
-//     mode: 'history',
-//     base: process.env.BASE_URL,
-//     routes
-// });
 
 export default router;
